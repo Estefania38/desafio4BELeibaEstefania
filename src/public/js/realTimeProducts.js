@@ -1,5 +1,5 @@
-const socketCliente = io();
-socketCliente.on("productos", (products) => {
+const socketClient = io();
+socketClient.on("productos", (products) => {
   console.log(products);
   updateProductList(products);
 });
@@ -20,10 +20,10 @@ function updateProductList(products) {
           <h2>${product.title}</h2>
           <div class="size">
             <h3>${product.description}</h3>
-            <span>7</span>
-            <span>8</span>
-            <span>9</span>
-            <span>10</span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
           <div class="color">
             <h3>${product.price}</h3>
@@ -52,7 +52,7 @@ form.addEventListener("submit", (evt) => {
   let price = form.elements.price.value;
   let code = form.elements.code.value;
 
-  socketCliente.emit("addProduct", {
+  socketClient.emit("addProduct", {
     title,
     description,
     stock,
@@ -68,9 +68,9 @@ form.addEventListener("submit", (evt) => {
 document.getElementById("delete-btn").addEventListener("click", function () {
     const deleteidinput = document.getElementById("id-prod");
     const deleteid = parseInt(deleteidinput.value);
-    socketCliente.emit("deleteProduct", deleteid);
+    socketClient.emit("deleteProduct", deleteid);
     deleteidinput.value = "";
   });
-socketCliente.on("productosupdated", (obj) => {
+socketClient.on("productosupdated", (obj) => {
   updateProductList(obj);
 });

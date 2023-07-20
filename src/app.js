@@ -33,26 +33,29 @@ app.use("/", viewsRouter);
 //guardar el servidor http en una variable
 const httpServer = app.listen(port,()=>console.log(`server listening on port ${port}`));
 
-//crear el servidor de websocket 
-const pmanager=new ProductManager(__dirname + "/files/products.json");
 const socketServer = new Server(httpServer);
+
+//crear el servidor de websocket 
+const pmanagersocket=new ProductManager(__dirname + "/files/products.json");
+
 
 //crear el canal de comunicacion entre front y back
 socketServer.on('connection', async (socket)=>{
         console.log(`nuevo cliente conectado con ID: ${socket.id}`)
-        const products = await pmanager.getProducts({});
-        socket.emit("products", products)
+        const listadeproductos = await pmanagersocket.getProducts({});
+        socketServer.emit("enviodeproductos", listadeproductos); socket
 
-        socket.on("addProduct", async data=>{
-            await pmanager.addProduct(data);
-            const updatedProducts = await pmanager.getProducts({}); // Obtener la lista actualizada de productos
-            socket.emit('productosupdated', updatedProducts);
+        socket.on("addProduct", async (obj)=>{
+            await pmanagersocket.addProduct(obj);
+            const listadeproductos = await pmanagersocket.getProducts({}); // Obtener la lista actualizada de productos
+            socketServer.emit('enviodeproductos', listadeproductos);
               });      
     
-      socket.on("deleteProduct", async (id) => {
-        console.log("ID del producto a eliminar:", id);
-        const deletedProduct = await pmanager.deleteProduct(id);
-        const updatedProducts = await pmanager.getProducts({});
-        socketServer.emit("productosupdated", updatedProducts);
+      socket.on("deleteProduct", async (productId) => {
+        
+        console.log("ID del producto a eliminar:", productId);
+        const deleteProduct = await pmanagersocket.deleteProduct(productId);
+        const updateProducts = await pmanagersocket.getProducts({});
+        socketServer.emit("productosupdated", updateProducts);
       });  
 });
