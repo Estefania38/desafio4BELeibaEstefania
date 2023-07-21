@@ -8,7 +8,7 @@ const productService = new ProductManager('products.json');
 
 // Ruta raíz GET /
 router.get("/", async (req, res) => {
-  const socket = io('http://localhost:8080');
+
   try {
     const limit = parseInt(req.query.limit);
     const products = await productService.get();
@@ -25,10 +25,10 @@ router.get("/", async (req, res) => {
 
 // Ruta GET /:pid
 router.get("/:pid", async (req, res) => {
-  const socket = io('http://localhost:8080');
+
   try {
-    const productId = parseInt(req.params.pid);
-    const product = await productService.getProductById(productId);
+    const id = parseInt(req.params.pid);
+    const product = await productService.getProductById(id);
     if (product) {
       return res.json({ status: "success", data: product });
     } else {
@@ -45,6 +45,7 @@ router.post("/", async (req, res) => {
   try {
     const newProduct = req.body;
     productService.addProduct(newProduct);
+    socket.emit("change", productService.getProducts());
     return res.json({ status: "success", message: "Producto creado" });
   } catch (error) {
     return res.status(500).send(error.message);
@@ -55,10 +56,11 @@ router.post("/", async (req, res) => {
 router.put("/:pid", async (req, res) => {
   const socket = io('http://localhost:8080');
   try {
-    const productId = parseInt(req.params.pid);
+    const id = parseInt(req.params.pid);
     const updatedFields = req.body;
-    const success = await productService.updateProduct(productId, updatedFields);
+    const success = productService.updateProduct(id, updatedFields);
     if (success) {
+      socket.emit("change", productService.getProducts());
       return res.json({ status: "success", message: "Producto actualizado" });
     } else {
       return res.status(404).json({ status: "error", message: "Producto no encontrado" });
@@ -72,10 +74,12 @@ router.put("/:pid", async (req, res) => {
 router.delete("/:pid", async (req, res) => {
   const socket = io('http://localhost:8080');
   try {
-    const productId = parseInt(req.params.pid);
-    const success = await productService.deleteProduct(productId);
+    const id = parseInt(req.params.pid);
+    const success = productService.deleteProduct(id);
     if (success) {
-      return res.json({ status: "success", message: "Producto eliminado" });
+      console.log('hola eliminado');
+      socket.emit('change', productService.getProducts())
+      return res.status(200).json({ status: "success", message: "Producto eliminado" });
     } else {
       return res.status(404).json({ status: "error", message: "Producto no encontrado" });
     }

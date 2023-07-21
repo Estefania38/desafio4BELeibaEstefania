@@ -39,7 +39,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: #B6FCFD;
+    background: #e29a35;
     -webkit-clip-path: circle(150px at 80% 20%);
             clip-path: circle(150px at 80% 20%);
     transition: 0.5s ease-in-out;
@@ -71,7 +71,7 @@
             clip-path: circle(300px at 80% -20%);
   }
   .container .card:after {
-    content: "Nike";
+    content: "Zapas";
     position: absolute;
     top: 30%;
     left: -20%;
@@ -84,8 +84,8 @@
   .container .card .imgBx {
     position: absolute;
     top: 50%;
-    width: 100%;
-    height: 220px;
+    width: 90%;
+    height: 200px;
     z-index: 1000;
     transition: 0.5s;
     transform: translateY(-50%);
@@ -94,7 +94,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 340px;
+    width: 300px;
     transform: translate(-50%, -50%) rotate(-10deg);
   }
   .container .card .contentBx {

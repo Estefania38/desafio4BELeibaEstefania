@@ -8,7 +8,7 @@ const router = Router();
         //routes
         //ruta a home
         router.get("/", async(req,res)=>{
-            const listaproductos=await pmanagersocket.getProducts({})
+            const listaproductos = pmanagersocket.getProducts()
             console.log(listaproductos)
             res.render("home", {listaproductos}, {style:"home.css"});
         });
@@ -16,7 +16,9 @@ const router = Router();
    
         //ruta a productos en tiempo real
         router.get('/realtimeproducts', (req,res)=>{
-            res.render("realTimeProducts");
+            const listaproductos = pmanagersocket.getProducts({})
+            console.log(listaproductos);
+            res.render("realTimeProducts",{listaproductos:listaproductos});
         });   
 
 export {router as viewsRouter};

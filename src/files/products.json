@@ -1,24 +1,57 @@
 [
     {
-        "id": 1,
-        "title": "CHAQUETA EFECTO PELO",
-        "description": "CHAQUETA EFECTO PELO",
-        "price": 16999,
-        "thumbnail": "https://static.zara.net/photos///2022/I/0/1/p/7901/462/746/2/w/430/7901462746_2_1_1.jpg?ts=1667467601721",
-        "code": 15645,
+        "id": 2,
+        "title": "Zapatillas de Moda para Mujer",
+        "description": "Nike Air Max Excee",
+        "price": 36999,
+        "thumbnail": "https://www.pngplay.com/wp-content/uploads/6/Red-Adidas-Shoes-Originals-PNG.png",
+        "code": 15626,
         "stock": 17,
         "status": true,
-        "category": "Buzos"
+        "category": "Zapatillas"
     },
     {
-        "id": 2,
-        "title": "SUDADERA CHICA BRILLO",
-        "description": "SUDADERA CHICA BRILLO",
-        "price": 15999,
-        "thumbnail": "https://static.zara.net/photos///2023/W/0/1/p/0264/482/533/2/w/430/0264482533_2_1_1.jpg?ts=1681471580132",
-        "code": 1564,
+        "id": 3,
+        "title": "Zapatillas de Moda para Mujer",
+        "description": "Nike Air Max Excee",
+        "price": 36999,
+        "thumbnail": "https://www.pngplay.com/wp-content/uploads/6/Red-Adidas-Shoes-Originals-PNG.png",
+        "code": 15626,
         "stock": 17,
         "status": true,
-        "category": "Buzos"
+        "category": "Zapatillas"
+    },
+    {
+        "id": 4,
+        "title": "Zapatillas de Moda para Mujer",
+        "description": "Nike Air Max 90 SE",
+        "price": 46999,
+        "thumbnail": "https://www.pngplay.com/wp-content/uploads/6/Red-Adidas-Shoes-Originals-PNG.png",
+        "code": 15849,
+        "stock": 17,
+        "status": true,
+        "category": "Zapatillas"
+    },
+    {
+        "id": 5,
+        "title": "Zapatillas de Moda para Mujer",
+        "description": "Nike Dunk High LX",
+        "price": 79999,
+        "thumbnail": "https://www.pngplay.com/wp-content/uploads/6/Red-Adidas-Shoes-Originals-PNG.png",
+        "code": 158459,
+        "stock": 17,
+        "status": true,
+        "category": "Zapatillas"
+    },
+    {
+        "id": 6,
+        "title": "Zapatillas de Moda para Mujer",
+        "description": "Adidas Dunk High LX",
+        "price": 79999,
+        "thumbnail": "https://www.pngplay.com/wp-content/uploads/6/Red-Adidas-Shoes-Originals-PNG.png",
+        "code": 158499,
+        "stock": 17,
+        "status": true,
+        "category": "Zapatillas"
     }
 ]

@@ -14,6 +14,7 @@ export class ProductManager {
       if (fs.existsSync(this.path)) {
         const fileContent = fs.readFileSync(this.path, 'utf-8');
         this.products = JSON.parse(fileContent);
+        return fileContent
       } else {
         this.products = [];
       }
@@ -46,7 +47,7 @@ export class ProductManager {
     }
   }
 
-  async getProducts() {
+  getProducts() {
     try {
       return this.products;
     } catch (error) {
@@ -84,14 +85,14 @@ export class ProductManager {
   }
 
 
-  addProduct(newProduct) {
+  addProduct (newProduct) {
     const { title, description, price, thumbnail, code, stock, category } = newProduct;
 
     if (!title.trim() || !description.trim() || !price || !thumbnail.trim() || !code || !stock || !category.trim()) {
       console.error("Error: todos los campos son obligatorios");
       return;
     }
-    if (typeof price !== 'number' || price <= 0) {
+    if (typeof price !== 'number' || price <= 0 || !Number.isInteger(price)) {
       console.error("Error: el precio debe ser un número positivo");
       return;
     }
@@ -122,7 +123,7 @@ export class ProductManager {
     console.log("Producto agregado con éxito. El nuevo producto es:", newProductData);
   }
 
-  updateProduct(productId, updatedFields) {
+  updateProduct (productId, updatedFields){
     const index = this.products.findIndex((product) => product.id === productId);
     if (index !== -1) {
       this.products[index] = { ...this.products[index], ...updatedFields };
@@ -134,15 +135,14 @@ export class ProductManager {
     return false;
   }
 
-  deleteProduct(productId) {
-    const index = this.products.findIndex((product) => product.id === productId);
-    if (index !== -1) {
-      this.products.splice(index, 1);
-      this.saveProducts();
-      return true;
-    }
-    return false;
-  }
+deleteProduct (productId) {
+    const allproducts = this.getProducts();
+    const productswithoutfound = allproducts.filter(
+  (elemento) => elemento.id !==  parseInt(productId)
+    );
+    fs.writeFileSync(this.path,JSON.stringify(productswithoutfound, null, 2))
+    return true
+  };
 
  getNextId() {
     const lastId = this.products.length > 0 ? this.products[this.products.length - 1].id : 0;

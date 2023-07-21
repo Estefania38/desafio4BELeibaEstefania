@@ -9,7 +9,6 @@ import {ProductManager} from "./dao/ProductManager.js";
 import path from "path";
 
 
-
 const app = express();
 const port = 8080;
 
@@ -20,6 +19,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.static('public'));
 
 //configuracion para utilizar handlebars
+
 app.engine('.hbs', handlebars.engine({extname: '.hbs'}));
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname,"/views"));
@@ -42,20 +42,21 @@ const pmanagersocket=new ProductManager(__dirname + "/files/products.json");
 //crear el canal de comunicacion entre front y back
 socketServer.on('connection', async (socket)=>{
         console.log(`nuevo cliente conectado con ID: ${socket.id}`)
-        const listadeproductos = await pmanagersocket.getProducts({});
-        socketServer.emit("enviodeproductos", listadeproductos); socket
+        // const listadeproductos = await pmanagersocket.getProducts({});
+        socket.on("change", (obj)=>{
+          socketServer.emit("enviodeproductos", obj); 
+        })
 
-        socket.on("addProduct", async (obj)=>{
-            await pmanagersocket.addProduct(obj);
-            const listadeproductos = await pmanagersocket.getProducts({}); // Obtener la lista actualizada de productos
-            socketServer.emit('enviodeproductos', listadeproductos);
-              });      
+      //   socket.on("addProduct", async (obj)=>{
+      //       await pmanagersocket.addProduct(obj);
+      //       const listadeproductos =  pmanagersocket.getProducts({}); // Obtener la lista actualizada de productos
+      //       socketServer.emit('enviodeproductos', listadeproductos);
+      //         });      
     
-      socket.on("deleteProduct", async (productId) => {
-        
-        console.log("ID del producto a eliminar:", productId);
-        const deleteProduct = await pmanagersocket.deleteProduct(productId);
-        const updateProducts = await pmanagersocket.getProducts({});
-        socketServer.emit("productosupdated", updateProducts);
-      });  
+      // socket.on("deleteProduct", async (id) => {        
+      //   console.log("ID del producto a eliminar:", id);
+      //   const deleteProduct = await pmanagersocket.deleteProduct(id);
+      //   const updateProducts = await pmanagersocket.getProducts({});
+      //   socketServer.emit("productosupdated", updateProducts);
+      // });  
 });
