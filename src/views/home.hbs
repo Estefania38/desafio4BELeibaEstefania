@@ -1,3 +1,8 @@
+<h1>Muestro chat y productos</h1>
+
+<imput id="chatbox" type="text" placeholder="ingrese el mensaje"/> 
+
+<div id="messagelogs"></div>
 
 {{#each listadeproductos}}
 <article class="container">
@@ -27,5 +32,6 @@
     </article>
 {{/each}}
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/home.js"></script>

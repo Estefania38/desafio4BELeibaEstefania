@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from 'uuid';
-import {__dirname} from "../utils.js";
+import {__dirname} from "../../../utils.js";
 
 export class ProductManager {
   constructor(fileName) {    
@@ -68,7 +68,7 @@ export class ProductManager {
   async save(product) {
     try {
       if (fs.existsSync(this.path)) {
-        let newId = uuidv4();
+       // let newId = uuidv4();
         const newProduct = {
           id: newId,
           ...product

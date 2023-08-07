@@ -1,1 +1,11 @@
-[]
+[
+    {
+        "id": "619e4cb4-f353-4121-a29d-9e2b9be6bcff",
+        "products": [
+            {
+                "product": "2",
+                "quantity": 1
+            }
+        ]
+    }
+]

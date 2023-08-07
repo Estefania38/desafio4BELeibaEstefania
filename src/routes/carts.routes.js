@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { CartManager } from "../dao/cartManager.js";
-import { ProductManager } from "../dao/ProductManager.js";
+import { CartsMongo } from "../dao/managers/mongo/cartsMongo.js";
+import { ProductsMongo } from "../dao/managers/mongo/productsMongo.js";
 import { __dirname } from "../utils.js";
 
 
 const router = Router();
 
-const cartService = new CartManager("carts.json");
-const productService = new ProductManager("products.json");
+const cartService = new CartsMongo("carts.json");
+const productService = new ProductsMongo("products.json");
 
 
 // Ruta Raiz POST

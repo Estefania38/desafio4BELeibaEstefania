@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { ProductManager } from "../dao/ProductManager.js";
+import {ProductsMongo} from "../dao/managers/mongo/productsMongo.js"
 import { io } from "socket.io-client";
 import { __dirname } from "../utils.js";
 
 const router = Router();
-const productService = new ProductManager('products.json');
+const productService = new ProductsMongo();
 
 // Ruta raíz GET /
 router.get("/", async (req, res) => {

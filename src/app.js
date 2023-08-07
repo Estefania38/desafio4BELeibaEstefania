@@ -1,16 +1,21 @@
 import express from "express";
-import { productsRouter } from "./routes/products.routes.js";
+//import { usersRouter } from "./routes/users.routes.js";
+import { productsRouter} from "./routes/products.routes.js";
 import {cartsRouter } from "./routes/carts.routes.js";
 import { __dirname } from "./utils.js";
-import handlebars from "express-handlebars";
+//import handlebars from "express-handlebars";
+import {engine} from "express-handlebars";
 import { viewsRouter } from "./routes/views.routes.js";
 import { Server } from "socket.io";
-import {ProductManager} from "./dao/ProductManager.js";
+import { ProductsMongo } from "./dao/managers/mongo/productsMongo.js";
 import path from "path";
+import {config} from "./config/config.js";
+import { connectDB } from "./config/dbConnection.js";
+import { chatModel } from "./dao/models/chat.model.js";
 
 
 const app = express();
-const port = 8080;
+const port = config.server.port;
 
 //midleware
 app.use(express.json()); 
@@ -20,23 +25,28 @@ app.use(express.static('public'));
 
 //configuracion para utilizar handlebars
 
-app.engine('.hbs', handlebars.engine({extname: '.hbs'}));
+app.engine('.hbs', engine({extname: '.hbs'}));
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname,"/views"));
 
 // mis rutas
-app.use("/api/carts", cartsRouter);
+app.use("/api/cart", cartsRouter);
 app.use("/api/products", productsRouter);
 app.use("/", viewsRouter);
+//app.use("/api/users", usersRouter);
 
 
 //guardar el servidor http en una variable
 const httpServer = app.listen(port,()=>console.log(`server listening on port ${port}`));
 
+//conectando a la base de datos
+connectDB ();
+
 const socketServer = new Server(httpServer);
 
+
 //crear el servidor de websocket 
-const pmanagersocket=new ProductManager(__dirname + "/files/products.json");
+const pmanagersocket=new ProductsMongo(__dirname + "/files/products.json");
 
 
 //crear el canal de comunicacion entre front y back
@@ -45,18 +55,29 @@ socketServer.on('connection', async (socket)=>{
         // const listadeproductos = await pmanagersocket.getProducts({});
         socket.on("change", (obj)=>{
           socketServer.emit("enviodeproductos", obj); 
-        })
-
-      //   socket.on("addProduct", async (obj)=>{
-      //       await pmanagersocket.addProduct(obj);
-      //       const listadeproductos =  pmanagersocket.getProducts({}); // Obtener la lista actualizada de productos
-      //       socketServer.emit('enviodeproductos', listadeproductos);
-      //         });      
-    
-      // socket.on("deleteProduct", async (id) => {        
-      //   console.log("ID del producto a eliminar:", id);
-      //   const deleteProduct = await pmanagersocket.deleteProduct(id);
-      //   const updateProducts = await pmanagersocket.getProducts({});
-      //   socketServer.emit("productosupdated", updateProducts);
-      // });  
+        })  
 });
+
+
+////////////////////////////////////////////////////////////////77
+
+
+//socket server
+socketServer.on("connection",(socket)=>{
+    console.log("nuevo cliente conectado");
+
+    socket.on("authenticated",async(msg)=>{
+      const messages = await chatModel.find();
+      socket.emit("messageHistory", messages);
+        socket.broadcast.emit("newUser",msg);
+    }); 
+    //recibir el mensaje del cliente
+    socket.on("message", async(data)=>{
+        console.log("data", data);
+        const messageCreated = await chatModel.create(data);
+        const messages = await chatModel.find();
+        socketServer.emit("messageHistory", messages);
+    })
+});
+
+
