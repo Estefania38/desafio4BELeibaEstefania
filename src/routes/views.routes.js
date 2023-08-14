@@ -30,6 +30,10 @@ const router = Router();
         }
         });   
 
+        // corregir la vita del chat
+        router.get("/chat",(req,res)=>{
+            res.render("chat")
+        })
       
 export {router as viewsRouter};
 

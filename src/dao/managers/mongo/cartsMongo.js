@@ -1,20 +1,20 @@
 import { cartsModel} from "../../models/carts.model.js";
-import mongoose from "mongoose";
+
 
 export class CartsMongo {
 
     constructor (){
-        this.model = cartsModel;
+        this.cart = cartsModel;
     };
     
-      async getAll() {
+      async getCarts() {
         try {
-          const carts = await Cart.find();
+          const carts = await cart.find().lean();
           return carts;
         } catch (error) {
-          throw error;
+          throw error;       
         }
-      }
+      };
     
       async save() {
         try {
@@ -25,35 +25,50 @@ export class CartsMongo {
           throw error;
         }
       }
-    
-      async addCart(cartId, productId) {
+
+      async getCartById(cartId) {
         try {
-          const cart = await Cart.findById(cartId);
-          if (cart) {
-            const existingProduct = cart.products.find((p) => p.product.equals(productId));
-    
-            if (existingProduct) {
-              existingProduct.quantity++;
-            } else {
-              cart.products.push({ product: productId, quantity: 1 });
-            }
-    
-            await cart.save();
-          } else {
-            throw new Error("Carrito no encontrado");
-          }
-        } catch (error) {
-          throw error;
-        }
-      }
-    
-      async getCartById(id) {
-        try {
-          const cart = await Cart.findById(id);
+          const cart = await cart.findById(cartId);
           return cart;
         } catch (error) {
           throw error;
         }
       }
-    }
+
+      addCart = async (products) => {
+        try {
+            let cartData = {};
+            if (products && products.length > 0) {
+                cartData.products = products;
+            }
+    
+            const cart = await cartModel.create(cartData);
+            return cart;
+        } catch (err) {
+            console.error('Error al crear el carrito:', err.message);
+            return err;
+        }
+    };
+
+      addProductInCart = async (cartId, obj) => {
+        try {
+            const filter = { _id: cartId, "products._id": obj._id };
+            const cart = await cart.findById(cartId);
+            const findProduct = cart.products.some((product) => product._id.toString() === obj._id);
+    
+            if (findProduct) {
+                const update = { $inc: { "products.$.quantity": obj.quantity } };
+                await cart.updateOne(filter, update);
+            } else {
+                const update = { $push: { products: { _id: obj._id, quantity: obj.quantity } } };
+                await cart.updateOne({ _id: cartId }, update);
+            }
+    
+            return await cart.findById(cartId);
+        } catch (err) {
+            console.error('Error al agregar el producto al carrito:', err.message);
+            return err;
+        }
+    };
+  }
     

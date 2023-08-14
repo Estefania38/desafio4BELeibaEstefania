@@ -1,5 +1,5 @@
 import { productsModel } from "../../models/products.model.js";
-import mongoose from "mongoose";
+
 
 export class ProductsMongo {
 
@@ -11,7 +11,7 @@ export class ProductsMongo {
 
     async get() {
         try {
-            const products = await this.model.find();
+            const products = await this.model.find().lean();
             return products;
         } catch (error) {
             console.log(error.message);
@@ -23,7 +23,7 @@ export class ProductsMongo {
 
     async getProducts() {
         try {
-            const products = await this.model.find();
+            const products = await this.model.find().lean();
             return products;
         } catch (error) {
             console.log(error.message);
@@ -58,9 +58,9 @@ export class ProductsMongo {
     // updateProduct
 
     async updateProduct(id, updatedFields) {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
+       /* if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error("ID de producto no válido");
-          }
+          }*/
         try {
             const product = await this.model.findByIdAndUpdate(id, updatedFields, {
                 new: true, // Devolverá el documento modificado después de la actualización

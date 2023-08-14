@@ -1,33 +1,37 @@
 import express from "express";
+// importando ruta absoluta 
+import { __dirname } from "./utils.js";
+// importando mis rutas
 //import { usersRouter } from "./routes/users.routes.js";
 import { productsRouter} from "./routes/products.routes.js";
 import {cartsRouter } from "./routes/carts.routes.js";
-import { __dirname } from "./utils.js";
+import { viewsRouter } from "./routes/views.routes.js";
 //import handlebars from "express-handlebars";
 import {engine} from "express-handlebars";
-import { viewsRouter } from "./routes/views.routes.js";
+// importando socket.io  
 import { Server } from "socket.io";
-import { ProductsMongo } from "./dao/managers/mongo/productsMongo.js";
 import path from "path";
 import {config} from "./config/config.js";
 import { connectDB } from "./config/dbConnection.js";
-import { chatModel } from "./dao/models/chat.model.js";
 
 
+
+//inicializando el servidor
 const app = express();
 const port = config.server.port;
 
-//midleware
+
+//midleware para que express entienda lo que envio por body  
 app.use(express.json()); 
 app.use(express.urlencoded({extended:true}));
-app.use(express.static(path.join(__dirname, "/public")));
+// archivos staticos
+app.use(express.static(path.join(__dirname+"/public")));
 app.use(express.static('public'));
 
-//configuracion para utilizar handlebars
-
+//configuracion para utilizar handlebars - motor de plantillas
 app.engine('.hbs', engine({extname: '.hbs'}));
 app.set('view engine', '.hbs');
-app.set('views', path.join(__dirname,"/views"));
+app.set('views', path.join(__dirname+"/views"));
 
 // mis rutas
 app.use("/api/cart", cartsRouter);
@@ -39,14 +43,18 @@ app.use("/", viewsRouter);
 //guardar el servidor http en una variable
 const httpServer = app.listen(port,()=>console.log(`server listening on port ${port}`));
 
+const socketServer = new Server(httpServer);
+
 //conectando a la base de datos
 connectDB ();
 
-const socketServer = new Server(httpServer);
-
-
+// importando product manager y chat model
+import { ProductsMongo } from "./dao/managers/mongo/productsMongo.js";
 //crear el servidor de websocket 
 const pmanagersocket=new ProductsMongo(__dirname + "/files/products.json");
+
+import { ChatMongo } from "../src/dao/managers/mongo/chatMongo.js"
+const chatMongo = new ChatMongo();
 
 
 //crear el canal de comunicacion entre front y back
@@ -72,12 +80,11 @@ socketServer.on("connection",(socket)=>{
         socket.broadcast.emit("newUser",msg);
     }); 
     //recibir el mensaje del cliente
-    socket.on("message", async(data)=>{
-        console.log("data", data);
-        const messageCreated = await chatModel.create(data);
-        const messages = await chatModel.find();
-        socketServer.emit("messageHistory", messages);
-    })
+    socket.on("message", async(info)=>{
+        console.log("data", info);
+        await chatMongo.createMessage(info);
+        socketServer.emit("chat", await chatMongo.getMessages());
+    });
 });
 
 
